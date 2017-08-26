@@ -26,7 +26,7 @@ func (conn *Connection) sendJSON(msg Message) {
 
 		err := d.Encode(&msg)
 		if err != nil {
-			log.Println("[socket-database] client has not recieve event:", err)
+			log.Println("[socket-database] client has not receive event:", err)
 			c.Close()
 			delete(conn.clients, addr)
 		}

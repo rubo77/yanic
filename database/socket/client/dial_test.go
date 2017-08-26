@@ -16,7 +16,7 @@ func TestConnectError(t *testing.T) {
 	}, "could connect")
 }
 
-func TestRecieveMessages(t *testing.T) {
+func TestReceiveMessages(t *testing.T) {
 	assert := assert.New(t)
 	server, err := socket.Connect(map[string]interface{}{
 		"enable":  true,
