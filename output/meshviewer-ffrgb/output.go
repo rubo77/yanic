@@ -1,28 +1,36 @@
-package nodelist
+package meshviewerFFRGB
 
 import (
+	"errors"
+
 	"github.com/FreifunkBremen/yanic/output"
 	"github.com/FreifunkBremen/yanic/runtime"
 )
 
 type Output struct {
 	output.Output
-	config Config
-	nodes  *runtime.Nodes
+	path  string
+	nodes *runtime.Nodes
 }
 
 type Config map[string]interface{}
 
 func (c Config) Enable() bool {
-	return c["enable"].(bool)
+	if enable, ok := c["enable"]; ok {
+		return enable.(bool)
+	}
+	return false
 }
 
 func (c Config) Path() string {
-	return c["path"].(string)
+	if path, ok := c["path"]; ok {
+		return path.(string)
+	}
+	return ""
 }
 
 func init() {
-	output.RegisterAdapter("nodelist", Register)
+	output.RegisterAdapter("meshviewer-ffrgb", Register)
 }
 
 func Register(nodes *runtime.Nodes, configuration interface{}) (output.Output, error) {
@@ -32,17 +40,19 @@ func Register(nodes *runtime.Nodes, configuration interface{}) (output.Output, e
 		return nil, nil
 	}
 
-	return &Output{
-		config: config,
-		nodes:  nodes,
-	}, nil
+	if path := config.Path(); path != "" {
+		return &Output{
+			path:  path,
+			nodes: nodes,
+		}, nil
+	}
+	return nil, errors.New("no path given")
+
 }
 
 func (o *Output) Save() {
 	o.nodes.RLock()
 	defer o.nodes.RUnlock()
 
-	if path := o.config.Path(); path != "" {
-		runtime.SaveJSON(transform(o.nodes), path)
-	}
+	runtime.SaveJSON(transform(o.nodes), o.path)
 }

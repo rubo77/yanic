@@ -28,9 +28,9 @@ type Position struct {
 	Long float64 `json:"long"`
 }
 
-func NewNode(n *runtime.Node) *Node {
+func NewNode(n *runtime.Node) (node *Node) {
 	if nodeinfo := n.Nodeinfo; nodeinfo != nil {
-		node := &Node{
+		node = &Node{
 			ID:   nodeinfo.NodeID,
 			Name: nodeinfo.Hostname,
 		}
@@ -43,9 +43,8 @@ func NewNode(n *runtime.Node) *Node {
 		if statistics := n.Statistics; statistics != nil {
 			node.Status.Clients = statistics.Clients.Total
 		}
-		return node
 	}
-	return nil
+	return
 }
 
 func transform(nodes *runtime.Nodes) *NodeList {

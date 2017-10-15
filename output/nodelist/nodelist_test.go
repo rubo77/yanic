@@ -44,6 +44,10 @@ func createTestNodes() *runtime.Nodes {
 			Hardware: data.Hardware{
 				Model: "TP-Link 841",
 			},
+			Location: &data.Location{
+				Latitude:   23,
+				Longtitude: 2,
+			},
 		},
 	})
 

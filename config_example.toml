@@ -71,6 +71,10 @@ output_path = "/var/www/html/index.html"
 enable   = true
 path = "/var/www/html/meshviewer/data/nodelist.json"
 
+[[nodes.output.meshviewer-ffrgb]]
+enable   = true
+path = "/var/www/html/meshviewer/data/meshviewer.json"
+
 
 [database]
 # cleaning data of measurement node,
