@@ -32,32 +32,25 @@ func transform(nodes *runtime.Nodes) *Meshviewer {
 			}
 		}
 
-		for _, link := range nodes.NodeLinks(nodeOrigin) {
-			if links[link.SourceMAC] != nil {
+		for _, linkOrigin := range nodes.NodeLinks(nodeOrigin) {
+			if link := links[linkOrigin.SourceMAC]; link != nil {
+				link.TargetTQ = float32(linkOrigin.TQ) / 255.0
 				continue
 			}
-			linkType := typeList[link.SourceMAC]
+			linkType := typeList[linkOrigin.SourceMAC]
 			if linkType == "" {
 				linkType = "other"
 			}
 			link := &Link{
 				Type:      linkType,
-				Source:    link.SourceID,
-				SourceMAC: link.SourceMAC,
-				Target:    link.TargetID,
-				TargetMAC: link.TargetMAC,
-				SourceTQ:  float32(link.TQ) / 255.0,
+				Source:    linkOrigin.SourceID,
+				SourceMAC: linkOrigin.SourceMAC,
+				Target:    linkOrigin.TargetID,
+				TargetMAC: linkOrigin.TargetMAC,
+				SourceTQ:  float32(linkOrigin.TQ) / 255.0,
 			}
 			links[link.TargetMAC] = link
 			meshviewer.Links = append(meshviewer.Links, link)
-		}
-	}
-	for _, nodeOrigin := range nodes.List {
-		for _, linkOrigin := range nodes.NodeLinks(nodeOrigin) {
-			link := links[linkOrigin.SourceMAC]
-			if link != nil {
-				link.TargetTQ = float32(linkOrigin.TQ) / 255.0
-			}
 		}
 	}
 
