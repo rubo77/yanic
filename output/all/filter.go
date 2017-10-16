@@ -79,11 +79,13 @@ func (f filterConfig) filtering(nodesOrigin *runtime.Nodes) *runtime.Nodes {
 		if list := f.Blacklist(); list != nil {
 			node = filterBlacklist(node, *list)
 		}
-		nodes.Update(nodeID, &data.ResponseData{
-			NodeInfo:   node.Nodeinfo,
-			Statistics: node.Statistics,
-			Neighbours: node.Neighbours,
-		})
+		if node != nil {
+			nodes.Update(nodeID, &data.ResponseData{
+				NodeInfo:   node.Nodeinfo,
+				Statistics: node.Statistics,
+				Neighbours: node.Neighbours,
+			})
+		}
 	}
 	return nodes
 }
