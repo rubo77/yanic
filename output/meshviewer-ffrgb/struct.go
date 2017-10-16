@@ -71,8 +71,8 @@ type Link struct {
 	Target    string  `json:"target"`
 	SourceTQ  float32 `json:"source_tq"`
 	TargetTQ  float32 `json:"target_tq"`
-	SourceMAC string  `json:"source_mac"`
-	TargetMAC string  `json:"target_mac"`
+	SourceMAC string  `json:"-"`
+	TargetMAC string  `json:"-"`
 }
 
 func NewNode(n *runtime.Node) *Node {
