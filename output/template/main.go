@@ -15,7 +15,6 @@ import (
 type Output struct {
 	output.Output
 	config   Config
-	nodes    *runtime.Nodes
 	template *goTemplate.Template
 }
 
@@ -36,9 +35,9 @@ func init() {
 	output.RegisterAdapter("template", Register)
 }
 
-func Register(nodes *runtime.Nodes, configuration interface{}) (output.Output, error) {
+func Register(configuration map[string]interface{}) (output.Output, error) {
 	var config Config
-	config = configuration.(map[string]interface{})
+	config = configuration
 	if !config.Enable() {
 		return nil, nil
 	}
@@ -59,13 +58,12 @@ func Register(nodes *runtime.Nodes, configuration interface{}) (output.Output, e
 	t.Parse(s)
 	return &Output{
 		config:   config,
-		nodes:    nodes,
 		template: t,
 	}, nil
 }
 
-func (o *Output) Save() {
-	stats := runtime.NewGlobalStats(o.nodes)
+func (o *Output) Save(nodes *runtime.Nodes) {
+	stats := runtime.NewGlobalStats(nodes)
 	if stats == nil {
 		log.Panic("update of [output.template] not possible invalid data for the template generated")
 	}

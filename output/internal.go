@@ -11,9 +11,9 @@ var quit chan struct{}
 // Start workers of database
 // WARNING: Do not override this function
 //  you should use New()
-func Start(output Output, config *runtime.Config) {
+func Start(output Output, nodes *runtime.Nodes, config *runtime.Config) {
 	quit = make(chan struct{})
-	go saveWorker(output, config.Nodes.SaveInterval.Duration)
+	go saveWorker(output, nodes, config.Nodes.SaveInterval.Duration)
 }
 
 func Close() {
@@ -23,12 +23,12 @@ func Close() {
 }
 
 // save periodically to output
-func saveWorker(output Output, saveInterval time.Duration) {
+func saveWorker(output Output, nodes *runtime.Nodes, saveInterval time.Duration) {
 	ticker := time.NewTicker(saveInterval)
 	for {
 		select {
 		case <-ticker.C:
-			output.Save()
+			output.Save(nodes)
 		case <-quit:
 			ticker.Stop()
 			return

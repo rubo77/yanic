@@ -7,31 +7,45 @@ import (
 
 type Output struct {
 	output.Output
-	nodes *runtime.Nodes
-	list  []output.Output
+	list   map[int]output.Output
+	filter map[int]filterConfig
 }
 
-func Register(nodes *runtime.Nodes, configuration interface{}) (output.Output, error) {
-	var list []output.Output
-	allOutputs := configuration.(map[string][]interface{})
+func Register(configuration map[string]interface{}) (output.Output, error) {
+	list := make(map[int]output.Output)
+	filter := make(map[int]filterConfig)
+	i := 1
+	allOutputs := configuration
 	for outputType, outputRegister := range output.Adapters {
-		outputConfigs := allOutputs[outputType]
+		outputConfigs, ok := allOutputs[outputType].([]map[string]interface{})
+		if !ok {
+			continue
+		}
 		for _, config := range outputConfigs {
-			output, err := outputRegister(nodes, config)
+			output, err := outputRegister(config)
 			if err != nil {
 				return nil, err
 			}
 			if output == nil {
 				continue
 			}
-			list = append(list, output)
+			list[i] = output
+			if c, ok := config["filter"]; ok {
+				filter[i] = c.(map[string]interface{})
+			}
+			i++
 		}
 	}
-	return &Output{list: list, nodes: nodes}, nil
+	return &Output{list: list, filter: filter}, nil
 }
 
-func (o *Output) Save() {
-	for _, item := range o.list {
-		item.Save()
+func (o *Output) Save(nodes *runtime.Nodes) {
+	for i, item := range o.list {
+		filteredNodes := nodes
+		if config, ok := o.filter[i]; ok {
+			filteredNodes = config.filtering(nodes)
+		}
+
+		item.Save(filteredNodes)
 	}
 }

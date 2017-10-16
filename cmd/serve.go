@@ -35,11 +35,11 @@ var serveCmd = &cobra.Command{
 		nodes = runtime.NewNodes(config)
 		nodes.Start()
 
-		outputs, err := allOutput.Register(nodes, config.Nodes.Output)
+		outputs, err := allOutput.Register(config.Nodes.Output)
 		if err != nil {
 			panic(err)
 		}
-		output.Start(outputs, config)
+		output.Start(outputs, nodes, config)
 		defer output.Close()
 
 		if config.Webserver.Enable {

@@ -9,8 +9,7 @@ import (
 
 type Output struct {
 	output.Output
-	path  string
-	nodes *runtime.Nodes
+	path string
 }
 
 type Config map[string]interface{}
@@ -33,26 +32,22 @@ func init() {
 	output.RegisterAdapter("meshviewer-ffrgb", Register)
 }
 
-func Register(nodes *runtime.Nodes, configuration interface{}) (output.Output, error) {
+func Register(configuration map[string]interface{}) (output.Output, error) {
 	var config Config
-	config = configuration.(map[string]interface{})
+	config = configuration
 	if !config.Enable() {
 		return nil, nil
 	}
 
 	if path := config.Path(); path != "" {
 		return &Output{
-			path:  path,
-			nodes: nodes,
+			path: path,
 		}, nil
 	}
 	return nil, errors.New("no path given")
 
 }
 
-func (o *Output) Save() {
-	o.nodes.RLock()
-	defer o.nodes.RUnlock()
-
-	runtime.SaveJSON(transform(o.nodes), o.path)
+func (o *Output) Save(nodes *runtime.Nodes) {
+	runtime.SaveJSON(transform(nodes), o.path)
 }

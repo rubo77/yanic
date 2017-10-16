@@ -1,11 +1,9 @@
-package meshviewer
+package all
 
 import (
 	"github.com/FreifunkBremen/yanic/data"
 	"github.com/FreifunkBremen/yanic/runtime"
 )
-
-type filter func(node *runtime.Node) *runtime.Node
 
 // Config Filter
 type filterConfig map[string]interface{}
@@ -63,26 +61,31 @@ func (f filterConfig) InArea() *area {
 }
 
 // Create Filter
-func createFilter(config filterConfig) filter {
-	return func(n *runtime.Node) *runtime.Node {
+func (f filterConfig) filtering(nodesOrigin *runtime.Nodes) *runtime.Nodes {
+	nodes := runtime.NewNodes(&runtime.Config{})
+	for nodeID, nodeOrigin := range nodesOrigin.List {
 		//maybe cloning of this object is better?
-		node := n
+		node := nodeOrigin
 
-		if config.NoOwner() {
+		if f.NoOwner() {
 			node = filterNoOwner(node)
 		}
-		if ok := config.HasLocation(); ok != nil {
+		if ok := f.HasLocation(); ok != nil {
 			node = filterHasLocation(node, *ok)
 		}
-		if area := config.InArea(); area != nil {
+		if area := f.InArea(); area != nil {
 			node = filterLocationInArea(node, *area)
 		}
-		if list := config.Blacklist(); list != nil {
+		if list := f.Blacklist(); list != nil {
 			node = filterBlacklist(node, *list)
 		}
-
-		return node
+		nodes.Update(nodeID, &data.ResponseData{
+			NodeInfo:   node.Nodeinfo,
+			Statistics: node.Statistics,
+			Neighbours: node.Neighbours,
+		})
 	}
+	return nodes
 }
 
 func filterBlacklist(node *runtime.Node, list map[string]interface{}) *runtime.Node {

@@ -13,7 +13,7 @@ type testConn struct {
 	CountSave int
 }
 
-func (c *testConn) Save() {
+func (c *testConn) Save(nodes *runtime.Nodes) {
 	c.CountSave++
 }
 
@@ -28,14 +28,14 @@ func TestStart(t *testing.T) {
 			SaveInterval runtime.Duration `toml:"save_interval"`
 			OfflineAfter runtime.Duration `toml:"offline_after"`
 			PruneAfter   runtime.Duration `toml:"prune_after"`
-			Output       map[string][]interface{}
+			Output       map[string]interface{}
 		}{
 			SaveInterval: runtime.Duration{Duration: time.Millisecond * 10},
 		},
 	}
 	assert.Nil(quit)
 
-	Start(conn, config)
+	Start(conn, nil, config)
 	assert.NotNil(quit)
 
 	assert.Equal(0, conn.CountSave)

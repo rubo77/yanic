@@ -14,7 +14,7 @@ type NodesV1 struct {
 }
 
 // BuildNodesV1 transforms data to legacy meshviewer
-func BuildNodesV1(toFilter filter, nodes *runtime.Nodes) interface{} {
+func BuildNodesV1(nodes *runtime.Nodes) interface{} {
 	meshviewerNodes := &NodesV1{
 		Version:   1,
 		List:      make(map[string]*Node),
@@ -22,21 +22,20 @@ func BuildNodesV1(toFilter filter, nodes *runtime.Nodes) interface{} {
 	}
 
 	for nodeID, nodeOrigin := range nodes.List {
-		nodeFiltere := toFilter(nodeOrigin)
-		if nodeOrigin.Statistics == nil || nodeFiltere == nil {
+		if nodeOrigin.Statistics == nil {
 			continue
 		}
 
 		node := &Node{
-			Firstseen: nodeFiltere.Firstseen,
-			Lastseen:  nodeFiltere.Lastseen,
+			Firstseen: nodeOrigin.Firstseen,
+			Lastseen:  nodeOrigin.Lastseen,
 			Flags: Flags{
-				Online:  nodeFiltere.Online,
-				Gateway: nodeFiltere.IsGateway(),
+				Online:  nodeOrigin.Online,
+				Gateway: nodeOrigin.IsGateway(),
 			},
-			Nodeinfo: nodeFiltere.Nodeinfo,
+			Nodeinfo: nodeOrigin.Nodeinfo,
 		}
-		node.Statistics = NewStatistics(nodeFiltere.Statistics)
+		node.Statistics = NewStatistics(nodeOrigin.Statistics)
 		meshviewerNodes.List[nodeID] = node
 	}
 	return meshviewerNodes

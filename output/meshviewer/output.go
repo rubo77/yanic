@@ -10,9 +10,7 @@ import (
 type Output struct {
 	output.Output
 	config  Config
-	nodes   *runtime.Nodes
 	builder nodeBuilder
-	filter  filter
 }
 
 type Config map[string]interface{}
@@ -34,16 +32,7 @@ func (c Config) GraphPath() string {
 	return c["graph_path"].(string)
 }
 
-func (c Config) FilterOption() filterConfig {
-	if v, ok := c["filter"]; ok {
-		var filterMap filterConfig
-		filterMap = v.(map[string]interface{})
-		return filterMap
-	}
-	return nil
-}
-
-type nodeBuilder func(filter, *runtime.Nodes) interface{}
+type nodeBuilder func(*runtime.Nodes) interface{}
 
 var nodeFormats = map[int64]nodeBuilder{
 	1: BuildNodesV1,
@@ -54,9 +43,9 @@ func init() {
 	output.RegisterAdapter("meshviewer", Register)
 }
 
-func Register(nodes *runtime.Nodes, configuration interface{}) (output.Output, error) {
+func Register(configuration map[string]interface{}) (output.Output, error) {
 	var config Config
-	config = configuration.(map[string]interface{})
+	config = configuration
 	if !config.Enable() {
 		return nil, nil
 	}
@@ -67,22 +56,20 @@ func Register(nodes *runtime.Nodes, configuration interface{}) (output.Output, e
 	}
 
 	return &Output{
-		nodes:   nodes,
 		config:  config,
 		builder: builder,
-		filter:  createFilter(config.FilterOption()),
 	}, nil
 }
 
-func (o *Output) Save() {
-	o.nodes.RLock()
-	defer o.nodes.RUnlock()
+func (o *Output) Save(nodes *runtime.Nodes) {
+	nodes.RLock()
+	defer nodes.RUnlock()
 
 	if path := o.config.NodesPath(); path != "" {
-		runtime.SaveJSON(o.builder(o.filter, o.nodes), path)
+		runtime.SaveJSON(o.builder(nodes), path)
 	}
 
 	if path := o.config.GraphPath(); path != "" {
-		runtime.SaveJSON(BuildGraph(o.nodes), path)
+		runtime.SaveJSON(BuildGraph(nodes), path)
 	}
 }

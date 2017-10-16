@@ -14,7 +14,7 @@ type testOutput struct {
 	CountSave int
 }
 
-func (c *testOutput) Save() {
+func (c *testOutput) Save(nodes *runtime.Nodes) {
 	c.CountSave++
 }
 
@@ -24,35 +24,55 @@ func TestStart(t *testing.T) {
 	nodes := &runtime.Nodes{}
 
 	globalOutput := &testOutput{}
-	output.RegisterAdapter("a", func(nodes *runtime.Nodes, config interface{}) (output.Output, error) {
+	output.RegisterAdapter("a", func(config map[string]interface{}) (output.Output, error) {
 		return globalOutput, nil
 	})
-	output.RegisterAdapter("b", func(nodes *runtime.Nodes, config interface{}) (output.Output, error) {
+	output.RegisterAdapter("b", func(config map[string]interface{}) (output.Output, error) {
 		return globalOutput, nil
 	})
-	output.RegisterAdapter("c", func(nodes *runtime.Nodes, config interface{}) (output.Output, error) {
+	output.RegisterAdapter("c", func(config map[string]interface{}) (output.Output, error) {
 		return globalOutput, nil
 	})
-	output.RegisterAdapter("d", func(nodes *runtime.Nodes, config interface{}) (output.Output, error) {
+	output.RegisterAdapter("d", func(config map[string]interface{}) (output.Output, error) {
 		return nil, nil
 	})
-	output.RegisterAdapter("e", func(nodes *runtime.Nodes, config interface{}) (output.Output, error) {
+	output.RegisterAdapter("e", func(config map[string]interface{}) (output.Output, error) {
 		return nil, errors.New("blub")
 	})
-	allOutput, err := Register(nodes, map[string][]interface{}{
-		"a": []interface{}{"a1", "a2"},
+	allOutput, err := Register(map[string]interface{}{
+		"a": []map[string]interface{}{
+			map[string]interface{}{
+				"enable": false,
+				"path":   "a1",
+			},
+			map[string]interface{}{
+				"path": "a2",
+			},
+		},
 		"b": nil,
-		"c": []interface{}{"c1"},
-		"d": []interface{}{"d0"}, // fetch continue command in Connect
+		"c": []map[string]interface{}{
+			map[string]interface{}{
+				"path":   "c1",
+				"filter": map[string]interface{}{},
+			},
+		},
+		// fetch continue command in Connect
+		"d": []map[string]interface{}{
+			map[string]interface{}{
+				"path": "d0",
+			},
+		},
 	})
 	assert.NoError(err)
 
 	assert.Equal(0, globalOutput.CountSave)
-	allOutput.Save()
+	allOutput.Save(nodes)
 	assert.Equal(3, globalOutput.CountSave)
 
-	_, err = Register(nodes, map[string][]interface{}{
-		"e": []interface{}{"give me an error"},
+	_, err = Register(map[string]interface{}{
+		"e": []map[string]interface{}{
+			map[string]interface{}{},
+		},
 	})
 	assert.Error(err)
 }

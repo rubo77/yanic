@@ -10,17 +10,17 @@ import (
 
 func TestOutput(t *testing.T) {
 	assert := assert.New(t)
-	out, err := Register(&runtime.Nodes{}, map[string]interface{}{})
+	out, err := Register(map[string]interface{}{})
 	assert.NoError(err)
 	assert.Nil(out)
 
-	out, err = Register(&runtime.Nodes{}, map[string]interface{}{
+	out, err = Register(map[string]interface{}{
 		"enable": true,
 	})
 	assert.Error(err)
 	assert.Nil(out)
 
-	out, err = Register(&runtime.Nodes{}, map[string]interface{}{
+	out, err = Register(map[string]interface{}{
 		"enable": true,
 		"path":   "/tmp/nodelist.json",
 	})
@@ -28,7 +28,7 @@ func TestOutput(t *testing.T) {
 	assert.NoError(err)
 	assert.NotNil(out)
 
-	out.Save()
+	out.Save(&runtime.Nodes{})
 	_, err = os.Stat("/tmp/nodelist.json")
 	assert.NoError(err)
 }

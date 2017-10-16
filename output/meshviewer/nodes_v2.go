@@ -14,27 +14,26 @@ type NodesV2 struct {
 }
 
 // BuildNodesV2 transforms data to modern meshviewers
-func BuildNodesV2(toFilter filter, nodes *runtime.Nodes) interface{} {
+func BuildNodesV2(nodes *runtime.Nodes) interface{} {
 	meshviewerNodes := &NodesV2{
 		Version:   2,
 		Timestamp: jsontime.Now(),
 	}
 
 	for _, nodeOrigin := range nodes.List {
-		nodeFiltere := toFilter(nodeOrigin)
-		if nodeOrigin.Statistics == nil || nodeFiltere == nil {
+		if nodeOrigin.Statistics == nil {
 			continue
 		}
 		node := &Node{
-			Firstseen: nodeFiltere.Firstseen,
-			Lastseen:  nodeFiltere.Lastseen,
+			Firstseen: nodeOrigin.Firstseen,
+			Lastseen:  nodeOrigin.Lastseen,
 			Flags: Flags{
-				Online:  nodeFiltere.Online,
-				Gateway: nodeFiltere.IsGateway(),
+				Online:  nodeOrigin.Online,
+				Gateway: nodeOrigin.IsGateway(),
 			},
-			Nodeinfo: nodeFiltere.Nodeinfo,
+			Nodeinfo: nodeOrigin.Nodeinfo,
 		}
-		node.Statistics = NewStatistics(nodeFiltere.Statistics)
+		node.Statistics = NewStatistics(nodeOrigin.Statistics)
 		meshviewerNodes.List = append(meshviewerNodes.List, node)
 	}
 	return meshviewerNodes
