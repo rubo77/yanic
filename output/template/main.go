@@ -58,11 +58,10 @@ func Register(configuration map[string]interface{}) (output.Output, error) {
 
 func (o *Output) Save(nodes *runtime.Nodes) {
 	stats := runtime.NewGlobalStats(nodes)
-	if stats == nil {
-		log.Panic("update of [output.template] not possible invalid data for the template generated")
-	}
+
 	tmpFile := o.config.ResultPath() + ".tmp"
 	f, err := os.OpenFile(tmpFile, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	defer f.Close()
 	if err != nil {
 		log.Panic(err)
 	}
@@ -70,7 +69,6 @@ func (o *Output) Save(nodes *runtime.Nodes) {
 	if err != nil {
 		log.Panic(err)
 	}
-	f.Close()
 	if err := os.Rename(tmpFile, o.config.ResultPath()); err != nil {
 		log.Panic(err)
 	}

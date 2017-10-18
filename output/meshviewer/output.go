@@ -16,11 +16,14 @@ type Output struct {
 type Config map[string]interface{}
 
 func (c Config) Version() int64 {
-	return c["version"].(int64)
+	if v := c["version"]; v != nil {
+		return int64(v.(int))
+	}
+	return -1
 }
 func (c Config) NodesPath() string {
 	if c["nodes_path"] == nil {
-		log.Panic("in configuration of [[nodes.output.meshviewer]] was no nodes_path defined", c)
+		log.Panic("in configuration of [[nodes.output.meshviewer]] was no nodes_path defined:\n", c)
 	}
 	return c["nodes_path"].(string)
 }

@@ -14,13 +14,6 @@ type Output struct {
 
 type Config map[string]interface{}
 
-func (c Config) Enable() bool {
-	if enable, ok := c["enable"]; ok {
-		return enable.(bool)
-	}
-	return false
-}
-
 func (c Config) Path() string {
 	if path, ok := c["path"]; ok {
 		return path.(string)

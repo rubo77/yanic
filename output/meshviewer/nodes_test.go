@@ -43,7 +43,12 @@ func createTestNodes() *runtime.Nodes {
 	nodes.Update("112233445566", &data.ResponseData{
 		Statistics: &data.Statistics{
 			Clients: data.Clients{
-				Total: 2,
+				Wifi24: 2,
+				Wifi5:  3,
+			},
+			Memory: data.Memory{
+				Total: 32,
+				Free:  8,
 			},
 		},
 		NodeInfo: &data.NodeInfo{
