@@ -15,10 +15,6 @@ type Output struct {
 
 type Config map[string]interface{}
 
-func (c Config) Enable() bool {
-	return c["enable"].(bool)
-}
-
 func (c Config) Version() int64 {
 	return c["version"].(int64)
 }
@@ -46,9 +42,6 @@ func init() {
 func Register(configuration map[string]interface{}) (output.Output, error) {
 	var config Config
 	config = configuration
-	if !config.Enable() {
-		return nil, nil
-	}
 
 	builder := nodeFormats[config.Version()]
 	if builder == nil {

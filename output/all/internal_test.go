@@ -48,6 +48,10 @@ func TestStart(t *testing.T) {
 			map[string]interface{}{
 				"path": "a2",
 			},
+			map[string]interface{}{
+				"enable": true,
+				"path":   "a3",
+			},
 		},
 		"b": nil,
 		"c": []map[string]interface{}{
@@ -75,4 +79,11 @@ func TestStart(t *testing.T) {
 		},
 	})
 	assert.Error(err)
+
+	// wrong format -> the only panic in Register
+	assert.Panics(func() {
+		Register(map[string]interface{}{
+			"e": true,
+		})
+	})
 }

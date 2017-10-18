@@ -35,9 +35,6 @@ func init() {
 func Register(configuration map[string]interface{}) (output.Output, error) {
 	var config Config
 	config = configuration
-	if !config.Enable() {
-		return nil, nil
-	}
 
 	if path := config.Path(); path != "" {
 		return &Output{

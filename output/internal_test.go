@@ -43,8 +43,6 @@ func TestStart(t *testing.T) {
 	assert.Equal(1, conn.CountSave)
 
 	Close()
-
-	time.Sleep(time.Millisecond * 12) // to reach timer.Stop() line
 	assert.Equal(1, conn.CountSave)
 
 }

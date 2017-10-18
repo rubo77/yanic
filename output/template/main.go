@@ -20,10 +20,6 @@ type Output struct {
 
 type Config map[string]interface{}
 
-func (c Config) Enable() bool {
-	return c["enable"].(bool)
-}
-
 func (c Config) TemplatePath() string {
 	return c["template_path"].(string)
 }
@@ -38,9 +34,7 @@ func init() {
 func Register(configuration map[string]interface{}) (output.Output, error) {
 	var config Config
 	config = configuration
-	if !config.Enable() {
-		return nil, nil
-	}
+
 	t := goTemplate.New("some")
 	t = t.Funcs(goTemplate.FuncMap{"json": func(v interface{}) string {
 		a, _ := json.Marshal(v)

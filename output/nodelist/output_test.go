@@ -10,11 +10,8 @@ import (
 
 func TestOutput(t *testing.T) {
 	assert := assert.New(t)
-	out, err := Register(map[string]interface{}{})
-	assert.NoError(err)
-	assert.Nil(out)
 
-	out, err = Register(map[string]interface{}{
+	out, err := Register(map[string]interface{}{
 		"enable": true,
 	})
 	assert.Error(err)
