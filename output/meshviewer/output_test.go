@@ -18,7 +18,7 @@ func TestOutput(t *testing.T) {
 
 	// no nodes path defined
 	out, err := Register(map[string]interface{}{
-		"version": 1,
+		"version": int64(1),
 	})
 	assert.NoError(err)
 	assert.NotNil(out)
@@ -27,7 +27,7 @@ func TestOutput(t *testing.T) {
 	})
 
 	out, err = Register(map[string]interface{}{
-		"version":    1,
+		"version":    int64(2),
 		"nodes_path": "/tmp/nodes.json",
 		"graph_path": "/tmp/graph.json",
 	})

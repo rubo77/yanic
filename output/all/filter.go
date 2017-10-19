@@ -1,9 +1,6 @@
 package all
 
-import (
-	"github.com/FreifunkBremen/yanic/data"
-	"github.com/FreifunkBremen/yanic/runtime"
-)
+import "github.com/FreifunkBremen/yanic/runtime"
 
 // Config Filter
 type filterConfig map[string]interface{}
@@ -11,7 +8,7 @@ type filterConfig map[string]interface{}
 // Create Filter
 func (f filterConfig) filtering(nodesOrigin *runtime.Nodes) *runtime.Nodes {
 	nodes := runtime.NewNodes(&runtime.Config{})
-	for nodeID, nodeOrigin := range nodesOrigin.List {
+	for _, nodeOrigin := range nodesOrigin.List {
 		//maybe cloning of this object is better?
 		node := nodeOrigin
 
@@ -28,11 +25,7 @@ func (f filterConfig) filtering(nodesOrigin *runtime.Nodes) *runtime.Nodes {
 			node = filterBlacklist(node, *list)
 		}
 		if node != nil {
-			nodes.Update(nodeID, &data.ResponseData{
-				NodeInfo:   node.Nodeinfo,
-				Statistics: node.Statistics,
-				Neighbours: node.Neighbours,
-			})
+			nodes.AddNode(node)
 		}
 	}
 	return nodes

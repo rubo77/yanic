@@ -13,6 +13,9 @@ func transform(nodes *runtime.Nodes) *Meshviewer {
 
 	links := make(map[string]*Link)
 
+	nodes.RLock()
+	defer nodes.RUnlock()
+
 	for _, nodeOrigin := range nodes.List {
 		node := NewNode(nodeOrigin)
 		meshviewer.Nodes = append(meshviewer.Nodes, node)

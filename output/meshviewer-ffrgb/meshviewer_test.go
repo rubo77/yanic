@@ -12,8 +12,8 @@ func TestTransform(t *testing.T) {
 	assert := assert.New(t)
 
 	nodes := runtime.NewNodes(&runtime.Config{})
-	nodes.Update("node_a", &data.ResponseData{
-		NodeInfo: &data.NodeInfo{
+	nodes.AddNode(&runtime.Node{
+		Nodeinfo: &data.NodeInfo{
 			NodeID: "node_a",
 			Network: data.Network{
 				Mac: "node:a:mac",
@@ -48,8 +48,8 @@ func TestTransform(t *testing.T) {
 			},
 		},
 	})
-	nodes.Update("node_b", &data.ResponseData{
-		NodeInfo: &data.NodeInfo{
+	nodes.AddNode(&runtime.Node{
+		Nodeinfo: &data.NodeInfo{
 			NodeID: "node_b",
 			Network: data.Network{
 				Mac: "node:b:mac",

@@ -17,7 +17,7 @@ type Config map[string]interface{}
 
 func (c Config) Version() int64 {
 	if v := c["version"]; v != nil {
-		return int64(v.(int))
+		return v.(int64)
 	}
 	return -1
 }
