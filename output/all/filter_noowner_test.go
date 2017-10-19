@@ -14,17 +14,20 @@ func TestFilterNoOwner(t *testing.T) {
 
 	config = map[string]interface{}{}
 
-	assert.True(config.NoOwner())
+	filterNoOwner := config.NoOwner()
+	n := filterNoOwner(&runtime.Node{Nodeinfo: &data.NodeInfo{
+		Owner: &data.Owner{
+			Contact: "blub",
+		},
+	}})
+	assert.NotNil(n)
+	assert.Nil(n.Nodeinfo.Owner)
 
-	config["no_owner"] = true
-	assert.True(config.NoOwner())
-
-	config["no_owner"] = false
-	assert.False(config.NoOwner())
-
-	n := filterNoOwner(&runtime.Node{})
+	n = filterNoOwner(&runtime.Node{})
 	assert.NotNil(n)
 
+	config["no_owner"] = true
+	filterNoOwner = config.NoOwner()
 	n = filterNoOwner(&runtime.Node{Nodeinfo: &data.NodeInfo{
 		Owner: &data.Owner{
 			Contact: "blub",
@@ -32,4 +35,15 @@ func TestFilterNoOwner(t *testing.T) {
 	}})
 	assert.NotNil(n)
 	assert.Nil(n.Nodeinfo.Owner)
+
+	config["no_owner"] = false
+	filterNoOwner = config.NoOwner()
+
+	n = filterNoOwner(&runtime.Node{Nodeinfo: &data.NodeInfo{
+		Owner: &data.Owner{
+			Contact: "blub",
+		},
+	}})
+	assert.NotNil(n)
+	assert.NotNil(n.Nodeinfo.Owner)
 }

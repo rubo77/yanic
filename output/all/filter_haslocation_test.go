@@ -14,33 +14,37 @@ func TestFilterHasLocation(t *testing.T) {
 
 	config = map[string]interface{}{}
 
-	assert.Nil(config.HasLocation())
-
-	config["has_location"] = true
-	assert.True(*config.HasLocation())
-
-	config["has_location"] = false
-	assert.False(*config.HasLocation())
-
+	filterHasLocation := config.HasLocation()
 	n := filterHasLocation(&runtime.Node{Nodeinfo: &data.NodeInfo{
 		Location: &data.Location{},
-	}}, true)
+	}})
 	assert.NotNil(n)
 
-	n = filterHasLocation(&runtime.Node{Nodeinfo: &data.NodeInfo{}}, true)
-	assert.Nil(n)
-
-	n = filterHasLocation(&runtime.Node{}, true)
-	assert.Nil(n)
+	config["has_location"] = true
+	filterHasLocation = config.HasLocation()
 
 	n = filterHasLocation(&runtime.Node{Nodeinfo: &data.NodeInfo{
 		Location: &data.Location{},
-	}}, false)
-	assert.Nil(n)
-
-	n = filterHasLocation(&runtime.Node{Nodeinfo: &data.NodeInfo{}}, false)
+	}})
 	assert.NotNil(n)
 
-	n = filterHasLocation(&runtime.Node{}, false)
+	n = filterHasLocation(&runtime.Node{Nodeinfo: &data.NodeInfo{}})
+	assert.Nil(n)
+
+	n = filterHasLocation(&runtime.Node{})
+	assert.Nil(n)
+
+	config["has_location"] = false
+	filterHasLocation = config.HasLocation()
+
+	n = filterHasLocation(&runtime.Node{Nodeinfo: &data.NodeInfo{
+		Location: &data.Location{},
+	}})
+	assert.Nil(n)
+
+	n = filterHasLocation(&runtime.Node{Nodeinfo: &data.NodeInfo{}})
+	assert.NotNil(n)
+
+	n = filterHasLocation(&runtime.Node{})
 	assert.NotNil(n)
 }

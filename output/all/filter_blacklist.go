@@ -2,22 +2,23 @@ package all
 
 import "github.com/FreifunkBremen/yanic/runtime"
 
-func (f filterConfig) Blacklist() *map[string]interface{} {
-	if v, ok := f["blacklist"]; ok {
-		list := make(map[string]interface{})
-		for _, nodeid := range v.([]interface{}) {
-			list[nodeid.(string)] = true
-		}
-		return &list
+func (f filterConfig) Blacklist() filterFunc {
+	v, ok := f["blacklist"]
+	if !ok {
+		return noFilter
 	}
-	return nil
-}
 
-func filterBlacklist(node *runtime.Node, list map[string]interface{}) *runtime.Node {
-	if nodeinfo := node.Nodeinfo; nodeinfo != nil {
-		if _, ok := list[nodeinfo.NodeID]; ok {
-			return nil
-		}
+	list := make(map[string]interface{})
+	for _, nodeid := range v.([]interface{}) {
+		list[nodeid.(string)] = true
 	}
-	return node
+
+	return func(node *runtime.Node) *runtime.Node {
+		if nodeinfo := node.Nodeinfo; nodeinfo != nil {
+			if _, ok := list[nodeinfo.NodeID]; ok {
+				return nil
+			}
+		}
+		return node
+	}
 }

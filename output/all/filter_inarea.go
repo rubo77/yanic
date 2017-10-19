@@ -9,7 +9,7 @@ type area struct {
 	longitudeMax float64
 }
 
-func (f filterConfig) InArea() *area {
+func (f filterConfig) InArea() filterFunc {
 	if areaConfigInt, ok := f["in_area"]; ok {
 		areaConfig := areaConfigInt.(map[string]interface{})
 		a := area{}
@@ -25,20 +25,18 @@ func (f filterConfig) InArea() *area {
 		if v, ok := areaConfig["longitude_max"]; ok {
 			a.longitudeMax = v.(float64)
 		}
-		return &a
-	}
-	return nil
-}
-
-func filterLocationInArea(node *runtime.Node, a *area) *runtime.Node {
-	if nodeinfo := node.Nodeinfo; nodeinfo != nil {
-		location := nodeinfo.Location
-		if location == nil {
-			return node
-		}
-		if location.Latitude >= a.latitudeMin && location.Latitude <= a.latitudeMax && location.Longtitude >= a.longitudeMin && location.Longtitude <= a.longitudeMax {
-			return node
+		return func(node *runtime.Node) *runtime.Node {
+			if nodeinfo := node.Nodeinfo; nodeinfo != nil {
+				location := nodeinfo.Location
+				if location == nil {
+					return node
+				}
+				if location.Latitude >= a.latitudeMin && location.Latitude <= a.latitudeMax && location.Longtitude >= a.longitudeMin && location.Longtitude <= a.longitudeMax {
+					return node
+				}
+			}
+			return nil
 		}
 	}
-	return nil
+	return noFilter
 }

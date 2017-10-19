@@ -137,6 +137,20 @@ func TestSelectNodes(t *testing.T) {
 	assert.Equal(time, selectedNodes[0].Firstseen)
 }
 
+func TestAddNode(t *testing.T) {
+	assert := assert.New(t)
+	nodes := NewNodes(&Config{})
+
+	nodes.AddNode(&Node{})
+	assert.Len(nodes.List, 0)
+
+	nodes.AddNode(&Node{Nodeinfo: &data.NodeInfo{}})
+	assert.Len(nodes.List, 0)
+
+	nodes.AddNode(&Node{Nodeinfo: &data.NodeInfo{NodeID: "blub"}})
+	assert.Len(nodes.List, 1)
+}
+
 func TestLinksNodes(t *testing.T) {
 	assert := assert.New(t)
 

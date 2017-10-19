@@ -19,45 +19,47 @@ func TestFilterInArea(t *testing.T) {
 	}
 	config = map[string]interface{}{}
 
-	area := config.InArea()
-	assert.Nil(area)
+	filterLocationInArea := config.InArea()
+	n := filterLocationInArea(&runtime.Node{Nodeinfo: &data.NodeInfo{
+		Location: &data.Location{Latitude: 4.0, Longtitude: 11.0},
+	}})
+	assert.NotNil(n)
 
 	config["in_area"] = areaConfig
-	area = config.InArea()
-	assert.NotNil(area)
+	filterLocationInArea = config.InArea()
 
 	// drop area without nodeinfo
-	n := filterLocationInArea(&runtime.Node{}, area)
+	n = filterLocationInArea(&runtime.Node{})
 	assert.Nil(n)
 
 	// keep without location
-	n = filterLocationInArea(&runtime.Node{Nodeinfo: &data.NodeInfo{}}, area)
+	n = filterLocationInArea(&runtime.Node{Nodeinfo: &data.NodeInfo{}})
 	assert.NotNil(n)
 
 	// zeros not in area (0, 0)
 	n = filterLocationInArea(&runtime.Node{Nodeinfo: &data.NodeInfo{
 		Location: &data.Location{},
-	}}, area)
+	}})
 	assert.Nil(n)
 
 	// in area
 	n = filterLocationInArea(&runtime.Node{Nodeinfo: &data.NodeInfo{
 		Location: &data.Location{Latitude: 4.0, Longtitude: 11.0},
-	}}, area)
+	}})
 	assert.NotNil(n)
 
 	n = filterLocationInArea(&runtime.Node{Nodeinfo: &data.NodeInfo{
 		Location: &data.Location{Latitude: 4.0, Longtitude: 13.0},
-	}}, area)
+	}})
 	assert.Nil(n)
 
 	n = filterLocationInArea(&runtime.Node{Nodeinfo: &data.NodeInfo{
 		Location: &data.Location{Latitude: 6.0, Longtitude: 11.0},
-	}}, area)
+	}})
 	assert.Nil(n)
 
 	n = filterLocationInArea(&runtime.Node{Nodeinfo: &data.NodeInfo{
 		Location: &data.Location{Latitude: 1.0, Longtitude: 2.0},
-	}}, area)
+	}})
 	assert.Nil(n)
 }

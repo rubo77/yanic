@@ -14,19 +14,21 @@ func TestFilterBlacklist(t *testing.T) {
 
 	config = map[string]interface{}{}
 
-	assert.Nil(config.Blacklist())
+	filterBlacklist := config.Blacklist()
 
-	config["blacklist"] = []interface{}{"a", "c"}
-	list := *config.Blacklist()
-	assert.Len(list, 2)
-
-	n := filterBlacklist(&runtime.Node{Nodeinfo: &data.NodeInfo{NodeID: "a"}}, list)
-	assert.Nil(n)
-
-	n = filterBlacklist(&runtime.Node{Nodeinfo: &data.NodeInfo{}}, list)
+	n := filterBlacklist(&runtime.Node{Nodeinfo: &data.NodeInfo{}})
 	assert.NotNil(n)
 
-	n = filterBlacklist(&runtime.Node{}, list)
+	config["blacklist"] = []interface{}{"a", "c"}
+	filterBlacklist = config.Blacklist()
+
+	n = filterBlacklist(&runtime.Node{Nodeinfo: &data.NodeInfo{NodeID: "a"}})
+	assert.Nil(n)
+
+	n = filterBlacklist(&runtime.Node{Nodeinfo: &data.NodeInfo{}})
+	assert.NotNil(n)
+
+	n = filterBlacklist(&runtime.Node{})
 	assert.NotNil(n)
 
 }
