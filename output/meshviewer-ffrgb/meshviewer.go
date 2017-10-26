@@ -44,13 +44,15 @@ func transform(nodes *runtime.Nodes) *Meshviewer {
 			if linkType == "" {
 				linkType = "other"
 			}
+			tq := float32(linkOrigin.TQ) / 255.0
 			link := &Link{
 				Type:      linkType,
 				Source:    linkOrigin.SourceID,
 				SourceMAC: linkOrigin.SourceMAC,
 				Target:    linkOrigin.TargetID,
 				TargetMAC: linkOrigin.TargetMAC,
-				SourceTQ:  float32(linkOrigin.TQ) / 255.0,
+				SourceTQ:  tq,
+				TargetTQ:  tq,
 			}
 			links[link.TargetMAC] = link
 			meshviewer.Links = append(meshviewer.Links, link)
