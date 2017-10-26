@@ -20,7 +20,7 @@ func transform(nodes *runtime.Nodes) *Meshviewer {
 	defer nodes.RUnlock()
 
 	for _, nodeOrigin := range nodes.List {
-		node := NewNode(nodeOrigin)
+		node := NewNode(nodes, nodeOrigin)
 		meshviewer.Nodes = append(meshviewer.Nodes, node)
 
 		typeList := make(map[string]string)

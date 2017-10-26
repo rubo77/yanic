@@ -10,7 +10,8 @@ import (
 
 func TestRegister(t *testing.T) {
 	assert := assert.New(t)
-	node := NewNode(&runtime.Node{
+	nodes := runtime.NewNodes(&runtime.Config{})
+	node := NewNode(nodes, &runtime.Node{
 		Nodeinfo: &data.NodeInfo{
 			Network: data.Network{
 				Mac: "blub",

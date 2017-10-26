@@ -14,30 +14,31 @@ type Meshviewer struct {
 }
 
 type Node struct {
-	Firstseen     jsontime.Time `json:"firstseen"`
-	Lastseen      jsontime.Time `json:"lastseen"`
-	IsOnline      bool          `json:"is_online"`
-	IsGateway     bool          `json:"is_gateway"`
-	Clients       uint32        `json:"clients"`
-	ClientsWifi24 uint32        `json:"clients_wifi24"`
-	ClientsWifi5  uint32        `json:"clients_wifi5"`
-	ClientsOthers uint32        `json:"clients_other"`
-	RootFSUsage   float64       `json:"rootfs_usage,omitempty"`
-	LoadAverage   float64       `json:"loadavg,omitempty"`
-	MemoryUsage   *float64      `json:"memory_usage,omitempty"`
-	Uptime        jsontime.Time `json:"uptime,omitempty"`
-	GatewayIPv4   string        `json:"gateway,omitempty"`
-	GatewayIPv6   string        `json:"gateway6,omitempty"`
-	NodeID        string        `json:"node_id"` // duplicated, ja bzw. nein ?
-	Network       Network       `json:"network"`
-	SiteCode      string        `json:"site_code,omitempty"`
-	Hostname      string        `json:"hostname"`
-	Location      *Location     `json:"location,omitempty"`
-	Firmware      Firmware      `json:"firmware,omitempty"`
-	Autoupdater   Autoupdater   `json:"autoupdater,omitempty"`
-	Nproc         int           `json:"nproc"`
-	Model         string        `json:"model,omitempty"`
-	VPN           bool          `json:"vpn"`
+	Firstseen      jsontime.Time `json:"firstseen"`
+	Lastseen       jsontime.Time `json:"lastseen"`
+	IsOnline       bool          `json:"is_online"`
+	IsGateway      bool          `json:"is_gateway"`
+	Clients        uint32        `json:"clients"`
+	ClientsWifi24  uint32        `json:"clients_wifi24"`
+	ClientsWifi5   uint32        `json:"clients_wifi5"`
+	ClientsOthers  uint32        `json:"clients_other"`
+	RootFSUsage    float64       `json:"rootfs_usage,omitempty"`
+	LoadAverage    float64       `json:"loadavg,omitempty"`
+	MemoryUsage    *float64      `json:"memory_usage,omitempty"`
+	Uptime         jsontime.Time `json:"uptime,omitempty"`
+	GatewayNexthop string        `json:"gateway_nexthop,omitempty"`
+	GatewayIPv4    string        `json:"gateway,omitempty"`
+	GatewayIPv6    string        `json:"gateway6,omitempty"`
+	NodeID         string        `json:"node_id"` // duplicated, ja bzw. nein ?
+	Network        Network       `json:"network"`
+	SiteCode       string        `json:"site_code,omitempty"`
+	Hostname       string        `json:"hostname"`
+	Location       *Location     `json:"location,omitempty"`
+	Firmware       Firmware      `json:"firmware,omitempty"`
+	Autoupdater    Autoupdater   `json:"autoupdater,omitempty"`
+	Nproc          int           `json:"nproc"`
+	Model          string        `json:"model,omitempty"`
+	VPN            bool          `json:"vpn"`
 }
 
 // Firmware out of software
@@ -75,7 +76,7 @@ type Link struct {
 	TargetMAC string  `json:"-"`
 }
 
-func NewNode(n *runtime.Node) *Node {
+func NewNode(nodes *runtime.Nodes, n *runtime.Node) *Node {
 	node := &Node{
 		Firstseen: n.Firstseen,
 		Lastseen:  n.Lastseen,
@@ -130,8 +131,9 @@ func NewNode(n *runtime.Node) *Node {
 		}
 
 		node.Uptime = jsontime.Now().Add(time.Duration(statistic.Uptime) * -time.Second)
-		node.GatewayIPv4 = statistic.GatewayIPv4
-		node.GatewayIPv6 = statistic.GatewayIPv6
+		node.GatewayNexthop = nodes.GetNodeIDbyMAC(statistic.GatewayNexthop)
+		node.GatewayIPv4 = nodes.GetNodeIDbyMAC(statistic.GatewayIPv4)
+		node.GatewayIPv6 = nodes.GetNodeIDbyMAC(statistic.GatewayIPv6)
 	}
 
 	return node

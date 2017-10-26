@@ -100,6 +100,10 @@ func (nodes *Nodes) Select(f func(*Node) bool) []*Node {
 	return result
 }
 
+func (nodes *Nodes) GetNodeIDbyMAC(mac string) string {
+	return nodes.ifaceToNodeID[mac]
+}
+
 // NodeLinks returns a list of links to known neighbours
 func (nodes *Nodes) NodeLinks(node *Node) (result []Link) {
 	// Store link data
