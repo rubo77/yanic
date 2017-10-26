@@ -1,6 +1,9 @@
 package meshviewerFFRGB
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/FreifunkBremen/yanic/jsontime"
 	"github.com/FreifunkBremen/yanic/runtime"
 )
@@ -36,7 +39,13 @@ func transform(nodes *runtime.Nodes) *Meshviewer {
 		}
 
 		for _, linkOrigin := range nodes.NodeLinks(nodeOrigin) {
-			if link := links[linkOrigin.SourceMAC]; link != nil {
+			var key string
+			if strings.Compare(linkOrigin.SourceMAC, linkOrigin.TargetMAC) > 0 {
+				key = fmt.Sprintf("%s-%s", linkOrigin.SourceMAC, linkOrigin.TargetMAC)
+			} else {
+				key = fmt.Sprintf("%s-%s", linkOrigin.TargetMAC, linkOrigin.SourceMAC)
+			}
+			if link := links[key]; link != nil {
 				link.TargetTQ = float32(linkOrigin.TQ) / 255.0
 				continue
 			}
@@ -54,7 +63,7 @@ func transform(nodes *runtime.Nodes) *Meshviewer {
 				SourceTQ:  tq,
 				TargetTQ:  tq,
 			}
-			links[link.TargetMAC] = link
+			links[key] = link
 			meshviewer.Links = append(meshviewer.Links, link)
 		}
 	}
