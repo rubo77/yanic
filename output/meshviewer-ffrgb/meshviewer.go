@@ -12,6 +12,8 @@ func transform(nodes *runtime.Nodes) *Meshviewer {
 
 	meshviewer := &Meshviewer{
 		Timestamp: jsontime.Now(),
+		Nodes:     make([]*Node, 0),
+		Links:     make([]*Link, 0),
 	}
 
 	links := make(map[string]*Link)

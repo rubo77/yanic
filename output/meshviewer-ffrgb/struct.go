@@ -29,7 +29,7 @@ type Node struct {
 	GatewayNexthop string        `json:"gateway_nexthop,omitempty"`
 	GatewayIPv4    string        `json:"gateway,omitempty"`
 	GatewayIPv6    string        `json:"gateway6,omitempty"`
-	NodeID         string        `json:"node_id"` // duplicated, ja bzw. nein ?
+	NodeID         string        `json:"node_id"`
 	Network        Network       `json:"network"`
 	SiteCode       string        `json:"site_code,omitempty"`
 	Hostname       string        `json:"hostname"`
