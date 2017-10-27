@@ -42,7 +42,8 @@ func TestStart(t *testing.T) {
 	time.Sleep(time.Millisecond * 12)
 	assert.Equal(1, conn.CountSave)
 
+	time.Sleep(time.Millisecond * 12)
 	Close()
-	assert.Equal(1, conn.CountSave)
+	assert.Equal(2, conn.CountSave)
 
 }
