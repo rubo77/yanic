@@ -35,7 +35,7 @@ type Node struct {
 	Hostname       string        `json:"hostname"`
 	Location       *Location     `json:"location,omitempty"`
 	Firmware       Firmware      `json:"firmware,omitempty"`
-	Autoupdater    Autoupdater   `json:"autoupdater,omitempty"`
+	Autoupdater    Autoupdater   `json:"autoupdater"`
 	Nproc          int           `json:"nproc"`
 	Model          string        `json:"model,omitempty"`
 	VPN            bool          `json:"vpn"`
@@ -49,8 +49,8 @@ type Firmware struct {
 
 // Autoupdater
 type Autoupdater struct {
-	Enabled bool   `json:"enabled,omitempty"`
-	Branch  string `json:"branch,omitempty"`
+	Enabled bool   `json:"enabled"`
+	Branch  string `json:"branch"`
 }
 
 // Network struct
@@ -99,7 +99,10 @@ func NewNode(nodes *runtime.Nodes, n *runtime.Node) *Node {
 			}
 		}
 		node.Firmware = nodeinfo.Software.Firmware
-		node.Autoupdater = nodeinfo.Software.Autoupdater
+		node.Autoupdater = Autoupdater{
+			Enabled: nodeinfo.Software.Autoupdater.Enabled,
+			Branch:  nodeinfo.Software.Autoupdater.Branch,
+		}
 		node.Nproc = nodeinfo.Hardware.Nproc
 		node.Model = nodeinfo.Hardware.Model
 		node.VPN = nodeinfo.VPN
